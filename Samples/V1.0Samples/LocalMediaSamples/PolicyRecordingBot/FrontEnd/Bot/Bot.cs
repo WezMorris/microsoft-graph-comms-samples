@@ -74,7 +74,6 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
 
             this.Logger = logger;
             this.Observer = new SampleObserver(logger);
-
             var name = this.GetType().Assembly.GetName().Name;
             var builder = new CommunicationsClientBuilder(
                 name,

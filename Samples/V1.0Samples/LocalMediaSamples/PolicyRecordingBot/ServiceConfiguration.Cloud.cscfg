@@ -2,18 +2,24 @@
 <ServiceConfiguration serviceName="PolicyRecordingBot" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="6" osVersion="*" schemaVersion="2015-04.2.6">
   <Role name="CRWorkerRole">
     <Instances count="2" />
-    <ConfigurationSettings> 
+    <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=$storage$;AccountKey=$storageKey$" />
-      <Setting name="ServiceDnsName" value="%ServiceDns%" /> 
-      <!-- xyz.cloudapp.net--> 
-      <Setting name="ServiceCNAME" value="%CName%" /> 
-      <!-- CNAME pointing to the .cloudapp.net if available.--> 
-      <Setting name="DefaultCertificate" value="ABC0000000000000000000000000000000000CBA" /> 
-      <Setting name="APPINSIGHTS_INSTRUMENTATIONKEY" value="" /> 
-    </ConfigurationSettings> 
-    <Certificates> 
-      <Certificate name="Default" thumbprint="ABC0000000000000000000000000000000000CBA" thumbprintAlgorithm="sha1" /> 
-    </Certificates> 
+      <Setting name="ServiceDnsName" value="VuzionCallRecorder.cloudapp.net" />
+      <!-- xyz.cloudapp.net-->
+      <Setting name="ServiceCNAME" value="callrecorder.vuzion.cloud" />
+      <!-- CNAME pointing to the .cloudapp.net if available.-->
+      <Setting name="DefaultCertificate" value="529884298e87d85396dd344e45ffd1e03fb7bff2" />
+      <Setting name="APPINSIGHTS_INSTRUMENTATIONKEY" value="" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="admin" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBpQYJKoZIhvcNAQcDoIIBljCCAZICAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEE/MfCk2cY6WTSk/sa63nLowDQYJKoZIhvcNAQEBBQAEggEAXgSbQtNPPqqFKI9u0AcTXnPVayI6GGa1QNj7W42TCAHlJ2naymZTFjy/wIuFB9/XL3mscB53EQKEiIWu/+DMjzYPKjGU3OZTWUK6xvyYd1ftFpnWC/K23PlH40foz9G1E4qwkJ3P7+/QXbvIYY2T+6fpAKPu+++kW3y3KpNJc607TVuIFP/MYRmeDUttKHcYGhvBAoRL18l9GQf1naFxrYkOUCxL0qFUDyjq5hVPhvio2fY2YLJqC0f7SGKvD8vN+Qq1++2LesfpD5zVScXlv6f74t95E0DRS6SJVhKenFyWNLEWDj4e1fsb7UOZ7RWS6jTJzxuiDSdPZyvGyOxVSTA7BgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECL4XrV0l/XbbgBhSbbaxN+XYrWqovLEdypyK6qwqDVu0dFw=" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2021-07-15T23:59:59.0000000+01:00" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" value="true" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="Default" thumbprint="529884298e87d85396dd344e45ffd1e03fb7bff2" thumbprintAlgorithm="sha1" />
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="F0CD04F95F33B657CA7C6D896B2CF2B81900C47D" thumbprintAlgorithm="sha1" />
+    </Certificates>
   </Role>
   <NetworkConfiguration>
     <AddressAssignments>

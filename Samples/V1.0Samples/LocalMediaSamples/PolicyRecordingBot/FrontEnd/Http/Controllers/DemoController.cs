@@ -52,6 +52,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Http
             int skip = 0,
             int take = 1000)
         {
+            this.Logger.Info("Log accessed");
             var logs = this.Observer.GetLogs(skip, take);
 
             var response = this.Request.CreateResponse(HttpStatusCode.OK);
@@ -149,6 +150,19 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Http
                 response.Content = new StringContent(e.ToString());
                 return response;
             }
+        }
+
+        /// <summary>
+        /// Stuff.
+        /// </summary>
+        /// <returns>response.</returns>
+        [HttpGet]
+        [Route("testcheck/")]
+        public HttpResponseMessage Test()
+        {
+            var response = this.Request.CreateResponse(HttpStatusCode.OK);
+            response.Content = new StringContent("this is to show that something is working");
+            return response;
         }
     }
 }

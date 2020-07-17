@@ -13,11 +13,15 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.InteropServices;
+    using Microsoft.Azure;
     using Microsoft.Graph.Communications.Calls.Media;
     using Microsoft.Graph.Communications.Common;
     using Microsoft.Graph.Communications.Common.Telemetry;
     using Microsoft.Skype.Bots.Media;
     using Microsoft.Skype.Internal.Media.Services.Common;
+    using Microsoft.WindowsAzure.Storage;
+    using Microsoft.WindowsAzure.Storage.Blob;
 
     /// <summary>
     /// Class responsible for streaming audio and video.
@@ -170,17 +174,26 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
         }
 
         /// <summary>
-        /// Receive audio from subscribed participant.
+        /// what ever nerd.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The audio media received arguments.
-        /// </param>
+        /// <param name="sender">a thing.</param>
+        /// <param name="e">anopther thing. </param>
         private void OnAudioMediaReceived(object sender, AudioMediaReceivedEventArgs e)
         {
             this.GraphLogger.Info($"Received Audio: [VideoMediaReceivedEventArgs(Data=<{e.Buffer.Data.ToString()}>, Length={e.Buffer.Length}, Timestamp={e.Buffer.Timestamp})]");
+
+            // e.Buffer.Data
+            var storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnection"));
+            var myClient = storageAccount.CreateCloudBlobClient();
+            var container = myClient.GetContainerReference("call-recordings");
+            container.CreateIfNotExists(BlobContainerPublicAccessType.Blob);
+
+            container.GetBlockBlobReference("call-recordings");
+
+            byte[] buffer = new byte[e.Buffer.Length];
+            Marshal.Copy(e.Buffer.Data, buffer, 0, (int)e.Buffer.Length);
+
+            System.IO.File.WriteAllBytes(@"c:\" + DateTime.Now.ToString() + ".wav", buffer);
 
             // TBD: Policy Recording bots can record the Audio here
             e.Buffer.Dispose();

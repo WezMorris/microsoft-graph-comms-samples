@@ -47,5 +47,9 @@
     <Certificates>
       <Certificate name="Default" storeLocation="LocalMachine" storeName="My" />
     </Certificates>
+    <Imports>
+      <Import moduleName="RemoteAccess" />
+      <Import moduleName="RemoteForwarder" />
+    </Imports>
   </WorkerRole>
 </ServiceDefinition>

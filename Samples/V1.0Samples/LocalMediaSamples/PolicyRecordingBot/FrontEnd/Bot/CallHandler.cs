@@ -41,8 +41,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
         // This dictionnary helps maintaining a mapping of the sockets subscriptions
         private readonly ConcurrentDictionary<uint, uint> msiToSocketIdMapping = new ConcurrentDictionary<uint, uint>();
 
-        private readonly Timer recordingStatusFlipTimer;
-
+        // private readonly Timer recordingStatusFlipTimer;
         private int recordingStatusIndex = -1;
 
         /// <summary>
@@ -66,10 +65,10 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
             this.BotMediaStream = new BotMediaStream(this.Call.GetLocalMediaSession(), this.GraphLogger);
 
             // initialize the timer
-            var timer = new Timer(1000 * 60); // every 60 seconds
-            timer.AutoReset = true;
-            timer.Elapsed += this.OnRecordingStatusFlip;
-            this.recordingStatusFlipTimer = timer;
+            // var timer = new Timer(1000 * 60); // every 60 seconds
+            // timer.AutoReset = true;
+            // timer.Elapsed += this.OnRecordingStatusFlip;
+            // this.recordingStatusFlipTimer = timer;
         }
 
         /// <summary>
@@ -104,8 +103,8 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
                 participant.OnUpdated -= this.OnParticipantUpdated;
             }
 
-            this.recordingStatusFlipTimer.Enabled = false;
-            this.recordingStatusFlipTimer.Elapsed -= this.OnRecordingStatusFlip;
+            // this.recordingStatusFlipTimer.Enabled = false;
+            // this.recordingStatusFlipTimer.Elapsed -= this.OnRecordingStatusFlip;
             this.BotMediaStream.Dispose();
         }
 
@@ -163,7 +162,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
                 this.OnRecordingStatusFlip(sender, null);
 
                 // for testing purposes, flip the recording status automatically at intervals
-                this.recordingStatusFlipTimer.Enabled = true;
+                // this.recordingStatusFlipTimer.Enabled = true;
             }
         }
 
