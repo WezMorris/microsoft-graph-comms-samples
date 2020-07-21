@@ -32,6 +32,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
         private readonly IVideoSocket vbssSocket;
         private readonly List<IVideoSocket> videoSockets;
         private readonly ILocalMediaSession mediaSession;
+        private readonly List<byte[]> finalDataBytes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BotMediaStream"/> class.
@@ -45,6 +46,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
             ArgumentVerifier.ThrowOnNullArgument(mediaSession, nameof(mediaSession));
             ArgumentVerifier.ThrowOnNullArgument(logger, nameof(logger));
 
+            this.finalDataBytes = new List<byte[]>();
             this.mediaSession = mediaSession;
 
             // Subscribe to the audio media.
@@ -142,6 +144,27 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
             }
         }
 
+        /// <summary>
+        /// Builds the byte arrays into a wav file.
+        /// </summary>
+        public void BuildFinalAudio()
+        {
+            byte[] outputArray = new byte[this.finalDataBytes.Count];
+            var logarray = string.Empty;
+            foreach (var i in this.finalDataBytes)
+            {
+                outputArray = outputArray.Concat(i).ToArray();
+            }
+
+            foreach (var x in outputArray)
+            {
+                logarray += x.ToString() + " ";
+            }
+
+            this.GraphLogger.Info("=====BUILD FINAL AUDIO=====; Byte count: " + this.finalDataBytes.Count);
+            this.GraphLogger.Info(logarray);
+        }
+
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
@@ -181,22 +204,49 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
         private void OnAudioMediaReceived(object sender, AudioMediaReceivedEventArgs e)
         {
             this.GraphLogger.Info($"Received Audio: [VideoMediaReceivedEventArgs(Data=<{e.Buffer.Data.ToString()}>, Length={e.Buffer.Length}, Timestamp={e.Buffer.Timestamp})]");
+            try
+            {
+                Guid g = Guid.NewGuid();
+                this.GraphLogger.Info("AUDIO FORMAT" + e.Buffer.AudioFormat.ToString());
+                /*System.IO.File.AppendAllText(g.ToString() + ".txt", Marshal.ReadInt32(e.Buffer.Data).ToString());
+                System.IO.File.AppendAllText(g.ToString() + ".txt", " ");
+                System.IO.File.AppendAllText(g.ToString() + "silence.txt", e.Buffer.IsSilence.ToString());
+
+                byte[] buffer = new byte[e.Buffer.Length];
+                Marshal.Copy(e.Buffer.Data, buffer, 0, (int)e.Buffer.Length);
+                System.IO.File.WriteAllBytes(@"c:\" + g.ToString() + ".wav", buffer);
+                */
+                byte[] managedArray = new byte[e.Buffer.Length];
+                var handler = e.Buffer.Data;
+                int start = 0;
+                int length = (int)e.Buffer.Length;
+                Marshal.Copy(handler, managedArray, start, length);
+
+                this.finalDataBytes.Add(managedArray);
+                this.GraphLogger.Info("OUTPUT Byte array: handler-" + handler + " length-" + length + " finalDataBytes-" + this.finalDataBytes.Count);
+            }
+            catch (Exception ex)
+            {
+                this.GraphLogger.Error(ex, $"BIGERROR: Saving data failed with error. ");
+            }
+
+            e.Buffer.Dispose();
 
             // e.Buffer.Data
-            var storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnection"));
-            var myClient = storageAccount.CreateCloudBlobClient();
-            var container = myClient.GetContainerReference("call-recordings");
-            container.CreateIfNotExists(BlobContainerPublicAccessType.Blob);
+            // var storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnection"));
+            // var myClient = storageAccount.CreateCloudBlobClient();
+            // var container = myClient.GetContainerReference("call-recordings");
+            // container.CreateIfNotExists(BlobContainerPublicAccessType.Blob);
 
-            container.GetBlockBlobReference("call-recordings");
+            // container.GetBlockBlobReference("call-recordings");
 
-            byte[] buffer = new byte[e.Buffer.Length];
-            Marshal.Copy(e.Buffer.Data, buffer, 0, (int)e.Buffer.Length);
+            // byte[] buffer = new byte[e.Buffer.Length];
+            // Marshal.Copy(e.Buffer.Data, buffer, 0, (int)e.Buffer.Length);
 
-            System.IO.File.WriteAllBytes(@"c:\" + DateTime.Now.ToString() + ".wav", buffer);
+            // System.IO.File.WriteAllBytes(@"c:\" + DateTime.Now.ToString() + ".wav", buffer);
 
-            // TBD: Policy Recording bots can record the Audio here
-            e.Buffer.Dispose();
+            //// TBD: Policy Recording bots can record the Audio here
+            // e.Buffer.Dispose();
         }
 
         /// <summary>

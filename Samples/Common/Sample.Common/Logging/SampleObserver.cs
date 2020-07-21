@@ -96,6 +96,7 @@ namespace Sample.Common.Logging
         /// <inheritdoc />
         public void OnNext(LogEvent logEvent)
         {
+            /*
             // Do nothing for metrics for now.
             if (logEvent.EventType == LogEventType.Metric)
             {
@@ -111,7 +112,7 @@ namespace Sample.Common.Logging
                     return;
                 }
             }
-
+            */
             var logString = this.formatter.Format(logEvent);
             lock (this.lockLogs)
             {

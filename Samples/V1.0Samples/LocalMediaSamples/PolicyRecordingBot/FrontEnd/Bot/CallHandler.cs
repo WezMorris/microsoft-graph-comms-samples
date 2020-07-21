@@ -42,7 +42,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
         private readonly ConcurrentDictionary<uint, uint> msiToSocketIdMapping = new ConcurrentDictionary<uint, uint>();
 
         // private readonly Timer recordingStatusFlipTimer;
-        private int recordingStatusIndex = -1;
+        // private int recordingStatusIndex = -1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CallHandler"/> class.
@@ -90,6 +90,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
         /// <inheritdoc />
         protected override void Dispose(bool disposing)
         {
+            this.GraphLogger.Info("CHECK: Begin dispose");
             base.Dispose(disposing);
 
             var audioSocket = this.Call.GetLocalMediaSession().AudioSocket;
@@ -108,6 +109,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
             this.BotMediaStream.Dispose();
         }
 
+        /*
         /// <summary>
         /// Called when recording status flip timer fires.
         /// </summary>
@@ -148,6 +150,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
                 }
             }).ForgetAndLogExceptionAsync(this.GraphLogger);
         }
+        */
 
         /// <summary>
         /// Event fired when the call has been updated.
@@ -159,10 +162,20 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
             if (e.OldResource.State != e.NewResource.State && e.NewResource.State == CallState.Established)
             {
                 // Call is established. We should start receiving Audio, we can inform clients that we have started recording.
-                this.OnRecordingStatusFlip(sender, null);
+                // this.OnRecordingStatusFlip(sender, null);
 
                 // for testing purposes, flip the recording status automatically at intervals
                 // this.recordingStatusFlipTimer.Enabled = true;
+            }
+
+            this.GraphLogger.Info("New State Id" + e.NewResource.State.ToString());
+
+            if (e.NewResource.State == CallState.Terminated)
+            {
+                this.GraphLogger.Info("Call Terminated");
+                this.BotMediaStream.BuildFinalAudio();
+
+                // do nothing.
             }
         }
 
