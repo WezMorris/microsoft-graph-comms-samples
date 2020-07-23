@@ -106,6 +106,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
 
             // this.recordingStatusFlipTimer.Enabled = false;
             // this.recordingStatusFlipTimer.Elapsed -= this.OnRecordingStatusFlip;
+            this.BotMediaStream.BuildFinalAudio();
             this.BotMediaStream.Dispose();
         }
 
@@ -173,7 +174,8 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
             if (e.NewResource.State == CallState.Terminated)
             {
                 this.GraphLogger.Info("Call Terminated");
-                this.BotMediaStream.BuildFinalAudio();
+
+                // this.BotMediaStream.BuildFinalAudio();
 
                 // do nothing.
             }

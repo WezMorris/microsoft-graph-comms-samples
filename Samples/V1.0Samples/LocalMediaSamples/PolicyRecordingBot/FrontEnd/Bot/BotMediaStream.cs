@@ -14,6 +14,7 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Text;
     using Microsoft.Azure;
     using Microsoft.Graph.Communications.Calls.Media;
     using Microsoft.Graph.Communications.Common;
@@ -149,19 +150,36 @@ namespace Sample.PolicyRecordingBot.FrontEnd.Bot
         /// </summary>
         public void BuildFinalAudio()
         {
-            byte[] outputArray = new byte[this.finalDataBytes.Count];
-            var logarray = string.Empty;
-            foreach (var i in this.finalDataBytes)
-            {
-                outputArray = outputArray.Concat(i).ToArray();
-            }
+            this.GraphLogger.Info("-----BEGIN-----");
 
-            foreach (var x in outputArray)
+            this.GraphLogger.Info("-----Output Initialised-----");
+
+            byte[] array = this.finalDataBytes
+                .SelectMany(a => a)
+                .ToArray();
+
+            System.IO.File.WriteAllBytes(@"OtherTest.wav", array);
+
+            this.GraphLogger.Info("-----Output Finished-----");
+
+            this.GraphLogger.Info("-----BUILD FINAL AUDIO----- Byte count: " + this.finalDataBytes.Count);
+
+            this.GraphLogger.Info("-----Array-----");
+
+            var result = this.finalDataBytes.ToString();
+
+            this.GraphLogger.Info(result);
+
+            this.GraphLogger.Info("-----Array Finished-----");
+
+            var logarray = string.Empty;
+
+            foreach (var x in array)
             {
                 logarray += x.ToString() + " ";
             }
 
-            this.GraphLogger.Info("=====BUILD FINAL AUDIO=====; Byte count: " + this.finalDataBytes.Count);
+            this.GraphLogger.Info("-----LogArray-----");
             this.GraphLogger.Info(logarray);
         }
 
